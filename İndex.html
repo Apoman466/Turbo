@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>TURBO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body { margin:0; font-family:Arial; background:#0b0b0b; color:#fff; }
+header { padding:15px; text-align:center; background:#121212; font-size:22px; color:#00ffcc; }
+.container { max-width:500px; margin:auto; padding:10px; }
+
+.profile { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.avatar { width:42px; height:42px; border-radius:50%; background:#00ffcc; }
+.username { font-weight:bold; }
+
+textarea, input {
+  width:100%; background:#121212; color:#fff;
+  border:none; border-radius:12px; padding:10px;
+}
+
+button {
+  width:100%; margin-top:8px; padding:12px;
+  border:none; border-radius:12px;
+  background:#00ffcc; font-weight:bold;
+}
+
+.post {
+  background:#121212; padding:12px;
+  border-radius:14px; margin-top:12px;
+  animation: pop 0.2s ease;
+}
+
+.actions { display:flex; gap:15px; margin-top:8px; font-size:14px; }
+.action { cursor:pointer; color:#aaa; }
+.action.liked { color:#ff4d6d; }
+
+.comments { margin-top:8px; display:none; }
+.comment {
+  background:#1a1a1a; padding:6px;
+  border-radius:8px; margin-top:4px;
+  font-size:14px;
+}
+
+@keyframes pop {
+  from { transform:scale(0.95); opacity:0; }
+  to { transform:scale(1); opacity:1; }
+}
+</style>
+</head>
+
+<body>
+
+<header>⚡ TURBO</header>
+
+<div class="container">
+
+  <div class="profile">
+    <div class="avatar"></div>
+    <div class="username">turbo_user</div>
+  </div>
+
+  <textarea id="postText" rows="3" placeholder="TURBO’da ne var?"></textarea>
+  <button onclick="paylas()">Paylaş</button>
+
+  <div id="feed"></div>
+</div>
+
+<!-- TURBO JS -->
+<script>
+function paylas() {
+  let text = postText.value;
+  if(text.trim()==="") return;
+
+  let post = document.createElement("div");
+  post.className = "post";
+
+  post.innerHTML = `
+    <div class="username">turbo_user</div>
+    <div>${text}</div>
+
+    <div class="actions">
+      <div class="action" onclick="like(this)">❤️ <span>0</span></div>
+      <div class="action" onclick="toggleComments(this)">💬 Yorum</div>
+    </div>
+
+    <div class="comments">
+      <input placeholder="Yorum yaz..." onkeydown="if(event.key==='Enter') yorumEkle(this)">
+      <div class="commentList"></div>
+    </div>
+  `;
+
+  feed.prepend(post);
+  postText.value="";
+}
+
+function like(el){
+  let s = el.querySelector("span");
+  el.classList.toggle("liked");
+  s.innerText = el.classList.contains("liked") ? ++s.innerText : --s.innerText;
+}
+
+function toggleComments(el){
+  let c = el.parentElement.nextElementSibling;
+  c.style.display = c.style.display==="block"?"none":"block";
+}
+
+function yorumEkle(input){
+  if(input.value.trim()==="") return;
+  let list = input.nextElementSibling;
+  let c = document.createElement("div");
+  c.className="comment";
+  c.innerText = "turbo_user: " + input.value;
+  list.appendChild(c);
+  input.value="";
+}
+</script>
+
+<!-- 🔥 FIREBASE (SADECE BAĞLANTI – GÜVENLİ) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDWu_i3SbI-EsKBqnlUgTQEBIJdSPMJUqI",
+  authDomain: "turbo-d148a.firebaseapp.com",
+  projectId: "turbo-d148a",
+  storageBucket: "turbo-d148a.appspot.com",
+  messagingSenderId: "575372636756",
+  appId: "1:575372636756:web:75352f26958dfda475f3c1",
+  measurementId: "G-636MXPT96F"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+console.log("🔥 TURBO Firebase'e bağlandı");
+</script>
+
+</body>
+</html>
